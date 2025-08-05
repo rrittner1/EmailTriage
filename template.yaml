@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Gmail Agentic AI App
+
+Resources:
+  GmailPollingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: gmail-polling-agent
+      Handler: app.lambda_handler
+      Runtime: python3.13
+      Timeout: 120
+      MemorySize: 512
+      CodeUri: .
+      Events:
+        PollGmail:
+          Type: Schedule
+          Properties:
+            Schedule: rate(5 minutes)
