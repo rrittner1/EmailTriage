@@ -7,7 +7,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: gmail-polling-agent
-      Handler: app.lambda_handler
+      Handler: email_retrieval.lambda_handler
       Runtime: python3.13
       Timeout: 120
       MemorySize: 512
@@ -17,3 +17,21 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(5 minutes)
+      Environment:
+        Variables:
+          AGENT_FUNCTION: !Ref TriageAgent
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource: !GetAtt TriageAgent.Arn
+  TriageAgent:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: triage-agent
+      Handler: agent.lambda_handler
+      Runtime: python3.13
+      Timeout: 600
+      MemorySize: 512
+      CodeUri: .
