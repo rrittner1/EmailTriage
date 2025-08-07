@@ -1,0 +1,42 @@
+This is from an email linking an article
+
+Delivered-To: "rdrittner.gmail.com"
+Received: funky encoded timestamp + readable timestamp
+X-Google-Smtp-Source: encoded
+X-Received: encoded/timestamp
+ARC-Seal: auth stuff
+ARC-Message-Signature: auth stuff
+ARC-Authentication-Results: auth stuff
+Return-Path: some gmail/api related stuff
+Received: ip related stuff
+Received-SPF: ip related stuff
+Authentication-Results: auth stugff
+DKIM-Signature: auth stuff
+DKIM-Signature: auth stuff
+X-Mailgun-Sid: idk not important
+X-Feedback-Id: idk not important
+Received: encoded stuff + timestamp
+X-Mailgun-Sending-Ip: ip
+X-Mailgun-Batch-Id: encoded
+Mime-Version: "1.0"
+Content-Type: http header stuff
+Subject: email Subject
+From: email sender - display name <email address>
+To: "rdrittner@gmail.com"
+X-Mailgun-Tag: "post"
+X-Mailgun-Track-Clicks: "false"
+Message-Id: <some kind of sender related email address>
+Date: Date
+Feedback-ID: something related to sender
+sender: email sender (same as From)
+References: <sender related email>
+In-Reply-To: <sender related email>
+Reply-To: <sender reply email>
+List-Owner: <related to sender email>
+List-URL: <url for sender>
+List-Archive: <url for sender>
+List-Id: <url for sender>
+List-Post: <link from sender>
+List-Unsubscribe: <unsubscribe link>
+List-Unsubscribe-Post: "List-Unsubscribe=One-Click"
+X-Mailgun-Variable: other metadata vars

@@ -14,11 +14,11 @@ lambda_client = boto3.client("lambda")
 
 def lambda_handler(event, context):
     print("Polling Gmail and running LangChain agent...")
-    get_unread_emails()
+    emails = get_unread_emails()
     response = lambda_client.invoke(
             FunctionName=os.environ["AGENT_FUNCTION"],
-            InvocationType="Event",  # async (use "RequestResponse" for sync)
-            Payload=json.dumps({})
+            InvocationType="Event",
+            Payload=json.dumps({"emails": emails})
         )
     return {
         "statusCode": 200,
@@ -34,16 +34,21 @@ def get_gmail_service():
 
 def get_unread_emails():
     service = get_gmail_service()
-    results = service.users().messages().list(userId="me", labelIds=["INBOX"], q="is:unread", maxResults=500).execute()
+    results = service.users().messages().list(userId="me", labelIds=["INBOX"], q="is:unread", maxResults=1).execute()
     messages = results.get("messages", [])
+
+    # passing senders, subjects, and times
+    email_outputs = []
 
     for msg in messages:
         full_message = service.users().messages().get(userId="me", id=msg["id"]).execute()
         headers = full_message["payload"]["headers"]
-        print(full_message)
-        continue
-        subject = next((h["value"] for h in headers if h["name"] == "Subject"), "(No Subject)")
-        print(f"Subject: {subject}")
+        email_outputs.append({
+            "subject": next((h["value"] for h in headers if h["name"] == "Subject"), "(No Subject)"),
+            "sender": next((h["value"] for h in headers if h["name"] == "From"), "(No Sender)"),
+            "date": next((h["value"] for h in headers if h["name"] == "Date"), "(No Date)")
+        })
+    return email_outputs
 
 def get_secret(): # Code from aws
     secret_name = "GmailCreds"
