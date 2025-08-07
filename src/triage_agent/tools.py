@@ -1,31 +1,28 @@
+import datetime
 from langchain.tools import BaseTool
-from schema import EmailMetadata, EvaluationResult
+from triage_agent.agent_schema import EvaluationResult
+from typing import ClassVar
 
 class EmailEvaluatorTool(BaseTool):
-    name = "email_evaluator"
-    description = "Grades email importance and urgency from metadata"
+    name: ClassVar[str] = "email_evaluator"
+    description: ClassVar[str] = "Grades email importance and urgency from metadata"
 
-    def _run(self, sender: str, subject: str, date_sent: str, current_date: str):
-        import datetime
-        # Basic rules (can be enhanced later)
+    def _run(self, sender: str, subject: str, date_sent: datetime, current_date: datetime):
         importance = 50
         urgency = 50
 
-        # Priority keywords
         if any(k in subject.lower() for k in ["urgent", "asap", "action required"]):
             urgency += 30
         if "manager" in sender.lower() or "ceo" in sender.lower():
             importance += 25
+
         try:
-            sent_date = datetime.datetime.fromisoformat(date_sent)
-            curr_date = datetime.datetime.fromisoformat(current_date)
-            delta = (curr_date - sent_date).days
+            delta = (current_date - date_sent).days
             if delta > 7:
                 urgency -= 30
         except Exception:
             pass
 
-        # Clamp scores
         urgency = max(0, min(100, urgency))
         importance = max(0, min(100, importance))
 

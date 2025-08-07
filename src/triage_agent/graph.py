@@ -1,6 +1,6 @@
 from langgraph.graph import StateGraph, END
-from schema import EmailMetadata
-from agent import create_agent
+from triage_agent.agent_schema import EmailMetadata
+from triage_agent.agent import create_agent
 
 def build_graph():
     agent = create_agent()

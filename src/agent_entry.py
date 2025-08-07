@@ -3,35 +3,38 @@ import boto3
 import os
 from botocore.exceptions import ClientError
 from datetime import datetime
-from agent.graph import build_graph
-from agent.schema import EmailMetadata
+from triage_agent.graph import build_graph
+from triage_agent.agent_schema import EmailMetadata
 
 lambda_client = boto3.client("lambda")
 
 def lambda_handler(event, context):
+    os.environ["GOOGLE_API_KEY"] = get_secret()
+    
     print(event)
     print(type(event))
 
-    sender = event["email"]["sender"]
-    subject = event["email"]["subject"]
-    email_date = event["email"]["date"]
-    print(sender)
-    print(subject)
-    print(email_date)
-
-    os.environ["GOOGLE_API_KEY"] = get_secret()
-
     app = build_graph()
 
-    state = EmailMetadata(
-        sender="ceo@company.com",
-        subject="Urgent: Need Q3 report ASAP",
-        date_sent=datetime.strptime(email_date, "%a, %d %b %Y %H:%M:%S %z"),
-        current_date=datetime.now()
-    )
+    emails = event["emails"]
+    for e in emails:
+        sender = e["sender"]
+        subject = e["subject"]
+        email_date = e["date"]
 
-    result = app.invoke(state)
-    print("Result:", result)
+        print(sender)
+        print(subject)
+        print(email_date)
+
+        state = EmailMetadata(
+            sender=sender,
+            subject=subject,
+            date_sent=datetime.strptime(email_date, "%a, %d %b %Y %H:%M:%S %z"),
+            current_date=datetime.now()
+        )
+
+        result = app.invoke(state)
+        print("Result:", result)
 
 def get_secret(): # Code from aws
     secret_name = "Google_Gemini_flash-2.0_key"
@@ -51,4 +54,4 @@ def get_secret(): # Code from aws
     except ClientError as e:
         raise e
 
-    return json.loads(get_secret_value_response["SecretString"])
+    return json.loads(get_secret_value_response["SecretString"])["GeminiKey"]

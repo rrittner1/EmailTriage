@@ -1,0 +1,9 @@
+{
+    "emails": [
+        {
+            "sender": "marketing@target.com",
+            "subject": "New Deals!",
+            "date": "Thu, 7 Aug 2025 18:55:44 +0000 (UTC)"
+        }
+    ]
+}
