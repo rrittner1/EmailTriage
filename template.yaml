@@ -26,6 +26,11 @@ Resources:
               Action:
                 - lambda:InvokeFunction
               Resource: !GetAtt TriageAgent.Arn
+        - Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: arn:aws:secretsmanager:us-east-1:767828762541:secret:GmailCreds-9VnUhM 
   TriageAgent:
     Type: AWS::Serverless::Function
     Properties:
