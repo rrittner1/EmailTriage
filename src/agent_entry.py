@@ -29,7 +29,7 @@ def lambda_handler(event, context):
         email_input = EmailState(
             sender=sender,
             subject=subject,
-            date_sent=datetime.strptime(email_date, "%a, %d %b %Y %H:%M:%S %z"),
+            email_date=datetime.strptime(email_date, "%a, %d %b %Y %H:%M:%S %z (%Z)"),
             current_date=datetime.now()
         )
 
