@@ -4,7 +4,7 @@ import os
 from botocore.exceptions import ClientError
 from datetime import datetime
 from triage_agent.graph import build_graph
-from triage_agent.agent_schema import EmailMetadata
+from triage_agent.state import EmailState
 
 lambda_client = boto3.client("lambda")
 
@@ -26,15 +26,15 @@ def lambda_handler(event, context):
         print(subject)
         print(email_date)
 
-        state = EmailMetadata(
+        email_input = EmailState(
             sender=sender,
             subject=subject,
             date_sent=datetime.strptime(email_date, "%a, %d %b %Y %H:%M:%S %z"),
             current_date=datetime.now()
         )
 
-        result = app.invoke(state)
-        print("Result:", result)
+        result = app.invoke(email_input)
+        print(result)
 
 def get_secret(): # Code from aws
     secret_name = "Google_Gemini_flash-2.0_key"

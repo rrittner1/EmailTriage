@@ -1,12 +1,10 @@
-from pydantic import BaseModel
+from typing import TypedDict
 from datetime import datetime
 
-class EmailMetadata(BaseModel):
+class EmailState(TypedDict):
     sender: str
     subject: str
-    date_sent: datetime
+    email_date: datetime
     current_date: datetime
-
-class EvaluationResult(BaseModel):
     importance: int
     urgency: int
