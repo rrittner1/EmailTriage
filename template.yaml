@@ -16,7 +16,7 @@ Resources:
         PollGmail:
           Type: Schedule
           Properties:
-            Schedule: rate(5 minutes)
+            Schedule: rate(15 minutes)
       Environment:
         Variables:
           AGENT_FUNCTION: !Ref TriageAgent

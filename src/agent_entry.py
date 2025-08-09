@@ -10,9 +10,6 @@ lambda_client = boto3.client("lambda")
 
 def lambda_handler(event, context):
     os.environ["GOOGLE_API_KEY"] = get_secret()
-    
-    print(event)
-    print(type(event))
 
     app = build_graph()
 
@@ -22,14 +19,15 @@ def lambda_handler(event, context):
         subject = e["subject"]
         email_date = e["date"]
 
-        print(sender)
-        print(subject)
+        if "(UTC)" in email_date:
+            email_date = email_date[:-6]
+
         print(email_date)
 
         email_input = EmailState(
             sender=sender,
             subject=subject,
-            email_date=datetime.strptime(email_date, "%a, %d %b %Y %H:%M:%S %z (%Z)"),
+            email_date=datetime.strptime(email_date, "%a, %d %b %Y %H:%M:%S %z"),
             current_date=datetime.now()
         )
 

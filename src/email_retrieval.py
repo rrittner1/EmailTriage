@@ -34,7 +34,7 @@ def get_gmail_service():
 
 def get_unread_emails():
     service = get_gmail_service()
-    results = service.users().messages().list(userId="me", labelIds=["INBOX"], q="is:unread", maxResults=5).execute()
+    results = service.users().messages().list(userId="me", labelIds=["INBOX"], q="is:unread", maxResults=1).execute()
     messages = results.get("messages", [])
 
     # passing senders, subjects, and times
