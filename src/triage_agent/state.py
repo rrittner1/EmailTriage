@@ -8,3 +8,4 @@ class EmailState(TypedDict):
     current_date: datetime
     importance: int
     urgency: int
+    justification: str

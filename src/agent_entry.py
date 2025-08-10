@@ -22,8 +22,6 @@ def lambda_handler(event, context):
         if "(UTC)" in email_date:
             email_date = email_date[:-6]
 
-        print(email_date)
-
         email_input = EmailState(
             sender=sender,
             subject=subject,
@@ -32,6 +30,7 @@ def lambda_handler(event, context):
         )
 
         result = app.invoke(email_input)
+
         print(result)
 
 def get_secret(): # Code from aws

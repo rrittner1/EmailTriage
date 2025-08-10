@@ -12,9 +12,13 @@ SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 lambda_client = boto3.client("lambda")
 
+live = False
+
 def lambda_handler(event, context):
     print("Polling Gmail and running LangChain agent...")
     emails = get_unread_emails()
+    if not live:
+        return
     response = lambda_client.invoke(
             FunctionName=os.environ["AGENT_FUNCTION"],
             InvocationType="Event",

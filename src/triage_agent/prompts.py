@@ -7,5 +7,10 @@ email_scoring_prompt = ChatPromptTemplate.from_messages([
      "Email subject: {subject}\n"
      "Email date: {email_date}\n"
      "Current date: {current_date}\n\n"
-     "Respond with JSON: {{'importance': <int>, 'urgency': <int>}}")
+     "Respond ONLY in valid JSON, in the format:\n"
+     "{{\n"
+     "  \"importance\": <int>,\n"
+     "  \"urgency\": <int>,\n"
+     "  \"justification\": \"<short explanation for both scores>\"\n"
+     "}}")
 ])
