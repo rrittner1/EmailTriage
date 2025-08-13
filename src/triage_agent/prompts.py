@@ -5,6 +5,7 @@ email_scoring_prompt = ChatPromptTemplate.from_messages([
     ("user", 
      "Email sender: {sender}\n"
      "Email subject: {subject}\n"
+     "Email body:\n{body}\n"
      "Email date: {email_date}\n"
      "Current date: {current_date}\n\n"
      "Respond ONLY in valid JSON, in the format:\n"

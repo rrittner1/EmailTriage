@@ -22,6 +22,7 @@ def score_email(state: EmailState) -> EmailState:
     prompt = email_scoring_prompt.format_messages(
         sender=state["sender"],
         subject=state["subject"],
+        body=state["body"],
         email_date=state["email_date"].isoformat(),
         current_date=state["current_date"].isoformat()
     )

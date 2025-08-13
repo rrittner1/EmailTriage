@@ -18,6 +18,7 @@ def lambda_handler(event, context):
         sender = e["sender"]
         subject = e["subject"]
         email_date = e["date"]
+        body = e["body"]
 
         if "(UTC)" in email_date:
             email_date = email_date[:-6]
@@ -25,6 +26,7 @@ def lambda_handler(event, context):
         email_input = EmailState(
             sender=sender,
             subject=subject,
+            body=body,
             email_date=datetime.strptime(email_date, "%a, %d %b %Y %H:%M:%S %z"),
             current_date=datetime.now()
         )
