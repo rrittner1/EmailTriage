@@ -1,0 +1,30 @@
+08/13/25 Check in: 
+The project is now at what I would consider to be an MVP. A lambda function polls my inbox,
+and passes the subject, body, and date of unread emails to another lambda function controlling
+the agent. The agent is still in a very low level of development, but even just by simply
+prompting the llm with one message and email info attached, it can give a response.
+
+Goals:
+I want a more complete and complex stable iteration of this project by the time I return to
+school in 12 days. Because of a vacation, I only really have a week. This more complete version
+would include the following features:
+    - a user profile system (allowing a user to provide information about themselves that gets 
+        stored and referenced by the agent)
+    - a way for users to manually regrade emails so that the agent can reference this input for
+        future email grading
+    - Some way for users to access their inbox ordered by the grading that the llm provides
+It could possibly also include these features (but I am not sure):
+    - a way for the agent to mark irrelevant emails as read, or to archive themselves
+    - a way for the agent to unsubscribe from emails
+    - a ui for the user inbox
+    - modifications to make the application scale to have users other than me
+    - a way to allow one of uses of the agent (for demonstration purposes)
+
+Next steps:
+I will work on the user profile next. It will need its own AWS resource to store the user
+profile, and the agent will also need to be able to access the profile. This is probably
+another lambda function.The schema of this profile is something else I need to figure out. 
+A simple free form "Write whatever may best inform this system about what emails will be 
+important to you" may suffice. It may also be time to do some more prompt engineering to see if 
+different ways of prompting the llm give responses I like better. This may create the side task
+of creating some kind of validation environment.
