@@ -14,7 +14,7 @@ SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 lambda_client = boto3.client("lambda")
 
-live = False
+live = True
 
 def lambda_handler(event, context):
     print("Polling Gmail and running LangChain agent...")
