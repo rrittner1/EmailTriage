@@ -31,6 +31,7 @@ def lambda_handler(event, context):
         "body": "Function ran successfully!"
     }
 
+# A long term functionality to allow more users than just me would involve making this process not use hard coded values 
 def get_gmail_service():
     cred_string = json.loads(json.loads(get_secret())["GmailToken"])
     creds = Credentials.from_authorized_user_info(cred_string)
@@ -65,6 +66,7 @@ def get_unread_emails():
         email_outputs.append({
             "subject": next((h["value"] for h in headers if h["name"] == "Subject"), "(No Subject)"),
             "sender": next((h["value"] for h in headers if h["name"] == "From"), "(No Sender)"),
+            "user_email": "rdrittner@gmail.com",
             "date": next((h["value"] for h in headers if h["name"] == "Date"), "(No Date)"),
             "body": body
         })
