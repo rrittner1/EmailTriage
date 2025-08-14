@@ -1,6 +1,6 @@
 from langgraph.graph import StateGraph, END
-from triage_agent.state import EmailState
-from triage_agent.nodes import score_email, fetch_profile
+from triage_agent_lambda.state import EmailState
+from triage_agent_lambda.nodes import score_email, fetch_profile
 
 def build_graph():
     workflow = StateGraph(EmailState)

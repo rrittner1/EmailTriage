@@ -3,8 +3,8 @@ import boto3
 import os
 from botocore.exceptions import ClientError
 from datetime import datetime
-from triage_agent.graph import build_graph
-from triage_agent.state import EmailState
+from triage_agent_lambda.graph import build_graph
+from triage_agent_lambda.state import EmailState
 
 lambda_client = boto3.client("lambda")
 

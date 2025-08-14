@@ -3,8 +3,8 @@ import os
 import boto3
 from datetime import datetime
 import re
-from triage_agent.state import EmailState
-from triage_agent.prompts import email_scoring_prompt
+from triage_agent_lambda.state import EmailState
+from triage_agent_lambda.prompts import email_scoring_prompt
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # DynamoDB setup
