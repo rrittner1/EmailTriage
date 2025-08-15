@@ -81,3 +81,42 @@ Resources:
           Properties:
             Path: /profile
             Method: POST
+
+
+  GradedEmailsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: GradedEmails
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: user_email
+          AttributeType: S
+        - AttributeName: score
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_email
+          KeyType: HASH
+        - AttributeName: score
+          KeyType: RANGE
+  StructuredUserProfilesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: StructuredUserProfiles
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: user_email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_email
+          KeyType: HASH
+  UserProfilesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: UserProfiles
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: user_email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_email
+          KeyType: HASH
