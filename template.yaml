@@ -46,16 +46,12 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: arn:aws:secretsmanager:us-east-1:767828762541:secret:Google_Gemini_flash-2.0_key-mKd1EN
-        - Statement:
-            - Effect: Allow
-              Action:
-                - dynamodb:GetItem
-              Resource: arn:aws:dynamodb:us-east-1:767828762541:table/StructuredUserProfiles
-        - Statement:
-            - Effect: Allow
-              Action:
-                - dynamodb:GetItem
-              Resource: arn:aws:dynamodb:us-east-1:767828762541:table/UserProfiles
+        - DynamoDBCrudPolicy:
+            TableName: StructuredUserProfiles
+        - DynamoDBCrudPolicy:
+            TableName: UserProfiles
+        - DynamoDBCrudPolicy:
+            TableName: ScoredEmails
   EditUserProfile:
     Type: AWS::Serverless::Function
     Properties:
@@ -83,16 +79,16 @@ Resources:
             Method: POST
 
 
-  GradedEmailsTable:
+  ScoredEmailsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: GradedEmails
+      TableName: ScoredEmails
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: user_email
           AttributeType: S
         - AttributeName: score
-          AttributeType: S
+          AttributeType: N
       KeySchema:
         - AttributeName: user_email
           KeyType: HASH

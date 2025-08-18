@@ -1,16 +1,21 @@
 import json
 import os
+import uuid
 import boto3
 from datetime import datetime
 import re
-from triage_agent_lambda.state import EmailState
-from triage_agent_lambda.prompts import email_scoring_prompt
+from state import EmailState
+from prompts import email_scoring_prompt
+from score_function import score_function
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # DynamoDB setup
 dynamodb = boto3.resource("dynamodb")
 PROFILE_TABLE = "StructuredUserProfiles" # Can change between UserProfiles and StructuredUserProfiles for testing
 profile_table = dynamodb.Table(PROFILE_TABLE)
+SCORED_TABLE = "ScoredEmails"
+scored_table = dynamodb.Table(PROFILE_TABLE)
+
 
 # Don't initialize llm in global scope because GOOGLE_API_KEY won't be set yet
 llm = None
@@ -56,4 +61,23 @@ def score_email(state: EmailState) -> EmailState:
         state["urgency"] = 50
         state["justification"] = "Processing error"
 
+    return state
+
+def store_grade(state: EmailState) -> EmailState:
+    """store graded+scored email in db"""
+    score = score_function(state["importance"], state["urgency"])
+    item = {
+        "email_id": str(uuid.uuid4()),
+        "user_email": state["user_email"],
+        "subject": state["subject"],
+        "sender": state["sender"],
+        "email_date": state["email_date"].isoformat(),
+        "current_date": state["current_date"].isoformat(),
+        "body": state["body"],
+        "score": score,
+        "importance": state["importance"],
+        "urgency": state["urgency"],
+        "justification": state["justification"]
+    }
+    scored_table.put_item(TableName="ScoredEmails", Item=item)
     return state

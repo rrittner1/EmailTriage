@@ -3,8 +3,8 @@ import boto3
 import os
 from botocore.exceptions import ClientError
 from datetime import datetime
-from triage_agent_lambda.graph import build_graph
-from triage_agent_lambda.state import EmailState
+from graph import build_graph
+from state import EmailState
 
 lambda_client = boto3.client("lambda")
 
@@ -21,7 +21,7 @@ def lambda_handler(event, context):
         body = e["body"]
         user_email = e["user_email"]
 
-        if "(UTC)" in email_date:
+        if email_date[-1] == ")" and email_date[-5] == "(":
             email_date = email_date[:-6]
 
         email_input = EmailState(
