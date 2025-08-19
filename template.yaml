@@ -77,7 +77,24 @@ Resources:
           Properties:
             Path: /profile
             Method: POST
-
+  AccessScoredInbox:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: access-scored-inbox
+      Handler: main.lambda_handler
+      Runtime: python3.13
+      Timeout: 600
+      MemorySize: 512
+      CodeUri: src/access_scored_inbox_lambda/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: ScoredEmails
+      Events:
+        GetScoredInbox:
+          Type: HttpApi
+          Properties:
+            Path: /inbox
+            Method: GET
 
   ScoredEmailsTable:
     Type: AWS::DynamoDB::Table

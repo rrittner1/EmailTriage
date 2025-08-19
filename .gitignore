@@ -2,3 +2,4 @@ venv/
 .aws-sam/
 samconfig.toml
 token.json
+credentials.json

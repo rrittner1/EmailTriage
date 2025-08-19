@@ -18,7 +18,7 @@ It could possibly also include these features (but I am not sure):
     - a way for the agent to unsubscribe from emails
     - a ui for the user inbox
     - modifications to make the application scale to have users other than me
-    - a way to allow one of uses of the agent (for demonstration purposes)
+    - a way to allow one off uses of the agent (for demonstration purposes)
 
 Next steps:
 I will work on the user profile next. It will need its own AWS resource to store the user
@@ -28,3 +28,39 @@ A simple free form "Write whatever may best inform this system about what emails
 important to you" may suffice. It may also be time to do some more prompt engineering to see if 
 different ways of prompting the llm give responses I like better. This may create the side task
 of creating some kind of validation environment.
+
+-----------------------------------------------------------------------------------------------
+
+08/18/25 Check in:
+A little behind schedule because I spent all weekend working on the AI Forge application. I 
+currently have the user profile part working, and have created a database to store graded
+emails. I am now working on the api for users to access their inbox. Obviously in the future
+this should be connected to a gui but I am going to hold off on that for now, that is not what
+the main focus of this project. Once I have the inbox access api set up, I will add an api to
+allow users to submit manual grades for emails, and then figure out the whole RAG thing to
+allow those gradings to be used to generate better grades from the llm. I am going to have to
+find some time to work on this while traveling or in san francisco because I have a good amount
+left that I would like to accomplish before school starts.
+
+Things to figure out:
+Where to store manually graded emails (same db or new one)
+How to prevent emails from being graded every polling cycle. Two ways:
+    - mark emails as read in gmail after processing themselves <----- probably this one
+    - check db for email before reading\
+How to allow users to clear inbox - does that move emails to archive in gmail?
+How to do RAG
+
+Next steps:
+Fix inbox access api
+Add remove from inbox api
+--- ^ Do tonight ^ ---
+Have emails marked as read in gmail after grading <- maybe also do this tonight
+Add user graded emails db (if I choose that setup)
+Add manually email grading api
+Figure out RAG
+--- ^ Do before going back to school (hopefully) ^ ---
+Create frontend
+Possible automatic irrelevant email archival
+Make app scale to have other users
+Allow one off uses of the agent for a demo
+--- ^ Do at somepoint (maybe) ^ ---
