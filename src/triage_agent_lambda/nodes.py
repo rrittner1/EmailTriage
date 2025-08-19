@@ -13,8 +13,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 dynamodb = boto3.resource("dynamodb")
 PROFILE_TABLE = "StructuredUserProfiles" # Can change between UserProfiles and StructuredUserProfiles for testing
 profile_table = dynamodb.Table(PROFILE_TABLE)
-SCORED_TABLE = "ScoredEmails"
-scored_table = dynamodb.Table(PROFILE_TABLE)
+INBOX_TABLE = "UserInboxes"
+inbox_table = dynamodb.Table(INBOX_TABLE)
 
 
 # Don't initialize llm in global scope because GOOGLE_API_KEY won't be set yet
@@ -79,5 +79,5 @@ def store_grade(state: EmailState) -> EmailState:
         "urgency": state["urgency"],
         "justification": state["justification"]
     }
-    scored_table.put_item(TableName="ScoredEmails", Item=item)
+    inbox_table.put_item(TableName="UserInboxes", Item=item)
     return state

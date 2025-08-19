@@ -6,7 +6,7 @@ from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
 
 dynamodb = boto3.resource("dynamodb")
-SCORED_TABLE = "ScoredEmails" 
+INBOX_TABLE = "UserInboxes" 
 
 def lambda_handler(event, context):
     try:
@@ -24,7 +24,7 @@ def lambda_handler(event, context):
                 "body": json.dumps({"error": "Missing required fields: user_email"})
             }
         
-        table = dynamodb.Table(SCORED_TABLE)
+        table = dynamodb.Table(INBOX_TABLE)
 
         response = table.query(
             KeyConditionExpression=Key("user_email").eq(user_email)

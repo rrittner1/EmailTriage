@@ -51,7 +51,7 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: UserProfiles
         - DynamoDBCrudPolicy:
-            TableName: ScoredEmails
+            TableName: UserInboxes
   EditUserProfile:
     Type: AWS::Serverless::Function
     Properties:
@@ -88,29 +88,58 @@ Resources:
       CodeUri: src/access_scored_inbox_lambda/
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: ScoredEmails
+            TableName: UserInboxes
       Events:
         GetScoredInbox:
           Type: HttpApi
           Properties:
             Path: /inbox
             Method: GET
+  RemoveFromInbox:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: remove-from-inbox
+      Handler: main.lambda_handler
+      Runtime: python3.13
+      Timeout: 600
+      MemorySize: 512
+      CodeUri: src/remove_from_inbox_lambda/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: UserInboxes
+      Events:
+        RemoveEmailFromInbox:
+          Type: HttpApi
+          Properties:
+            Path: /remove
+            Method: DELETE
 
-  ScoredEmailsTable:
+  UserInboxesTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: ScoredEmails
-      BillingMode: PAY_PER_REQUEST
+      TableName: UserInboxes
       AttributeDefinitions:
         - AttributeName: user_email
+          AttributeType: S
+        - AttributeName: email_id
           AttributeType: S
         - AttributeName: score
           AttributeType: N
       KeySchema:
         - AttributeName: user_email
           KeyType: HASH
-        - AttributeName: score
+        - AttributeName: email_id
           KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: UserScoreIndex
+          KeySchema:
+            - AttributeName: user_email
+              KeyType: HASH
+            - AttributeName: score
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
   StructuredUserProfilesTable:
     Type: AWS::DynamoDB::Table
     Properties:
