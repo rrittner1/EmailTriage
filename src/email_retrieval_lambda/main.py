@@ -19,7 +19,7 @@ live = False
 def lambda_handler(event, context):
     print("Polling Gmail and running LangChain agent...")
     emails = get_unread_emails()
-    if not live:
+    if not live and not "test" in event:
         return
     response = lambda_client.invoke(
             FunctionName=os.environ["AGENT_FUNCTION"],
@@ -33,7 +33,7 @@ def lambda_handler(event, context):
 
 # A long term functionality to allow more users than just me would involve making this process not use hard coded values 
 def get_gmail_service():
-    cred_string = json.loads(json.loads(get_secret())["GmailToken"])
+    cred_string = json.loads(json.loads(get_secret())["GmailReadToken"])
     creds = Credentials.from_authorized_user_info(cred_string)
 
     if not creds or not creds.valid:
@@ -42,7 +42,7 @@ def get_gmail_service():
         else:
             flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
-            with open('token.json', 'w') as token:
+            with open('gmail_secrets/read.json', 'w') as token:
                 token.write(creds.to_json())
             print(creds.to_json())
     
@@ -68,12 +68,13 @@ def get_unread_emails():
             "sender": next((h["value"] for h in headers if h["name"] == "From"), "(No Sender)"),
             "user_email": "rdrittner@gmail.com",
             "date": next((h["value"] for h in headers if h["name"] == "Date"), "(No Date)"),
-            "body": body
+            "body": body,
+            "email_id": msg["id"]
         })
     return email_outputs
 
 def get_secret(): # Code from aws
-    secret_name = "GmailCreds"
+    secret_name = "GmailReadCreds"
     region_name = "us-east-1"
 
     # Create a Secrets Manager client

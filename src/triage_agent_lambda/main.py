@@ -20,6 +20,7 @@ def lambda_handler(event, context):
         email_date = e["date"]
         body = e["body"]
         user_email = e["user_email"]
+        email_id = e["email_id"]
 
         if email_date[-1] == ")" and email_date[-5] == "(":
             email_date = email_date[:-6]
@@ -29,6 +30,7 @@ def lambda_handler(event, context):
             subject=subject,
             body=body,
             user_email=user_email,
+            email_id=email_id,
             email_date=datetime.strptime(email_date, "%a, %d %b %Y %H:%M:%S %z"),
             current_date=datetime.now()
         )

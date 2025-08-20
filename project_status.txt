@@ -64,3 +64,5 @@ Possible automatic irrelevant email archival
 Make app scale to have other users
 Allow one off uses of the agent for a demo
 --- ^ Do at somepoint (maybe) ^ ---
+
+Right now: added node to make as read in workflow, has not been tested

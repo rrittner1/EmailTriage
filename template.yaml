@@ -30,7 +30,7 @@ Resources:
             - Effect: Allow
               Action:
                 - secretsmanager:GetSecretValue
-              Resource: arn:aws:secretsmanager:us-east-1:767828762541:secret:GmailCreds-9VnUhM 
+              Resource: arn:aws:secretsmanager:us-east-1:767828762541:secret:GmailReadCreds-i1oLq4
   TriageAgent:
     Type: AWS::Serverless::Function
     Properties:
@@ -46,6 +46,11 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: arn:aws:secretsmanager:us-east-1:767828762541:secret:Google_Gemini_flash-2.0_key-mKd1EN
+        - Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: arn:aws:secretsmanager:us-east-1:767828762541:secret:GmailModifyCreds-3xOQjt
         - DynamoDBCrudPolicy:
             TableName: StructuredUserProfiles
         - DynamoDBCrudPolicy:

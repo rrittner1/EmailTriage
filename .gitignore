@@ -1,5 +1,5 @@
 venv/
 .aws-sam/
 samconfig.toml
-token.json
+gmail_secrets/
 credentials.json

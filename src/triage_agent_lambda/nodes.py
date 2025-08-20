@@ -1,13 +1,12 @@
 import json
-import os
-import uuid
 import boto3
-from datetime import datetime
 import re
 from state import EmailState
 from prompts import email_scoring_prompt
-from score_function import score_function
+from utils import get_gmail_service, score_function
 from langchain_google_genai import ChatGoogleGenerativeAI
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 
 # DynamoDB setup
 dynamodb = boto3.resource("dynamodb")
@@ -61,13 +60,16 @@ def score_email(state: EmailState) -> EmailState:
         state["urgency"] = 50
         state["justification"] = "Processing error"
 
+    print(state)
     return state
 
 def store_grade(state: EmailState) -> EmailState:
+    print(state)
+    print("email_id" in state)
     """store graded+scored email in db"""
     score = score_function(state["importance"], state["urgency"])
     item = {
-        "email_id": str(uuid.uuid4()),
+        "email_id": state["email_id"],
         "user_email": state["user_email"],
         "subject": state["subject"],
         "sender": state["sender"],
@@ -81,3 +83,18 @@ def store_grade(state: EmailState) -> EmailState:
     }
     inbox_table.put_item(TableName="UserInboxes", Item=item)
     return state
+
+def mark_as_read(state: EmailState) -> EmailState:
+    """mark email as read in gmail inbox"""
+    email_id = state["email_id"]
+    user_email = state["user_email"]
+
+    service = get_gmail_service(["https://www.googleapis.com/auth/gmail.modify"])
+
+    service.users().messages().modify(
+        userId="me",
+        id=email_id,
+        body={"removeLabelIds": ["UNREAD"]}
+    ).execute()
+
+    return {**state, "marked_as_read": True}

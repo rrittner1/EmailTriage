@@ -4,6 +4,7 @@ from datetime import datetime
 class EmailState(TypedDict):
     sender: str
     user_email: str
+    email_id: str
     subject: str
     body: str
     email_date: datetime
@@ -12,3 +13,4 @@ class EmailState(TypedDict):
     importance: int
     urgency: int
     justification: str
+    marked_as_read: bool
