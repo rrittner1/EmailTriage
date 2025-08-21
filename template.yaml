@@ -129,8 +129,6 @@ Resources:
       CodeUri: src/user_grade_email_lambda/
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: UserInboxes
-        - DynamoDBCrudPolicy:
             TableName: UserGradedEmails
       Events:
         UserGradeEmail:
