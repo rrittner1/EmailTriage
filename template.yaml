@@ -130,6 +130,10 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: UserGradedEmails
+        - Statement:
+            Effect: Allow
+            Action: bedrock:InvokeModel
+            Resource: "*"
       Events:
         UserGradeEmail:
           Type: HttpApi

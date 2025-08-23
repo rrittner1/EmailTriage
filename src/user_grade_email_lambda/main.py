@@ -1,12 +1,15 @@
 import base64
+from decimal import Decimal
 import json
+import os
 import boto3
 from datetime import datetime
 from botocore.exceptions import ClientError
 from utils import score_function
 
 dynamodb = boto3.resource("dynamodb")
-GRADED_TABLE = "UserGradedEmails"  # Can be changed to UserProfiles
+GRADED_TABLE = "UserGradedEmails"
+bedrock = boto3.client("bedrock-runtime", region_name=os.environ.get("AWS_REGION","us-east-1"))
 
 def lambda_handler(event, context):
     try:
@@ -28,8 +31,6 @@ def lambda_handler(event, context):
         justification = body.get("justification")
         score = score_function(importance, urgency)
 
-
-
         if not user_email or not email_id or not email_date or not current_date or not sender or not importance or not urgency or not justification:
             return {
                 "statusCode": 400,
@@ -49,7 +50,8 @@ def lambda_handler(event, context):
             "importance": importance,
             "urgency": urgency,
             "justification": justification,
-            "score": score
+            "score": score,
+            "embedding": embed(f"{sender}\n{subject}\n{email_body}")
         }
 
         table.put_item(TableName=GRADED_TABLE, Item=new_item)
@@ -70,3 +72,12 @@ def lambda_handler(event, context):
             "statusCode": 500,
             "body": json.dumps({"error": str(e)})
         }
+    
+def embed(text: str):
+    payload = {"inputText": text}
+    resp = bedrock.invoke_model(
+        modelId="amazon.titan-embed-text-v2:0",
+        body=json.dumps(payload)
+    )
+    vec = json.loads(resp["body"].read())["embedding"]
+    return [Decimal(str(x)) for x in vec]
