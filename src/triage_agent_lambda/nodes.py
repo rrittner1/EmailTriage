@@ -3,8 +3,9 @@ import boto3
 import re
 from state import EmailState
 from prompts import email_scoring_prompt
-from utils import get_gmail_service, score_function
+from utils import cosine, embed, get_gmail_service, score_function
 from langchain_google_genai import ChatGoogleGenerativeAI
+from boto3.dynamodb.conditions import Key
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 
@@ -14,6 +15,8 @@ PROFILE_TABLE = "StructuredUserProfiles" # Can change between UserProfiles and S
 profile_table = dynamodb.Table(PROFILE_TABLE)
 INBOX_TABLE = "UserInboxes"
 inbox_table = dynamodb.Table(INBOX_TABLE)
+GRADED_TABLE = "UserGradedEmails"
+graded_table = dynamodb.Table(GRADED_TABLE)
 
 
 # Don't initialize llm in global scope because GOOGLE_API_KEY won't be set yet
@@ -42,7 +45,8 @@ def score_email(state: EmailState) -> EmailState:
         body=state["body"],
         user_profile=state["user_profile"],
         email_date=state["email_date"].isoformat(),
-        current_date=state["current_date"].isoformat()
+        current_date=state["current_date"].isoformat(),
+        examples = state["examples"]
     )
 
     response = llm.invoke(prompt)
@@ -64,8 +68,6 @@ def score_email(state: EmailState) -> EmailState:
     return state
 
 def store_grade(state: EmailState) -> EmailState:
-    print(state)
-    print("email_id" in state)
     """store graded+scored email in db"""
     score = score_function(state["importance"], state["urgency"])
     item = {
@@ -98,3 +100,37 @@ def mark_as_read(state: EmailState) -> EmailState:
     ).execute()
 
     return {**state, "marked_as_read": True}
+
+def get_examples(state: EmailState) -> EmailState:
+    """gets user graded emails as examples for llm"""
+    k = 5 # max number of samples to take
+    min_sim = -1 # minimum similarity email that will be considered to be used as an example
+    response = graded_table.query(
+        KeyConditionExpression=Key("user_email").eq(state["user_email"])
+    )
+    graded_emails = response.get("Items", [])
+    embedding = embed(f"{state["sender"]}\n{state["subject"]}\n{state["body"]}")
+    similarity = []
+    for i, e in enumerate(graded_emails):
+        if "embedding" not in e:
+            raise Exception("embedding not found in graded email")
+        stored_embedding = [float(val) for val in e["embedding"]]
+        sim = cosine(embedding, stored_embedding)
+        if sim > min_sim:
+            similarity.append((sim, e))
+    similarity.sort(reverse=True, key=lambda x: x[0])
+    print([s[0] for s in similarity])
+    best_examples = [e for sim, e in similarity[:min(k, len(similarity))]]
+    state["examples"] = [{
+        "sender": e["sender"],
+        "subject": e["subject"],
+        "body": e["body"],
+        "email_date": e["email_date"],
+        "current_date": e["current_date"],
+        "importance": e["importance"],
+        "urgency": e["urgency"],
+        "justification": e["justification"]
+    } for e in best_examples]
+    return state
+
+    

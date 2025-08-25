@@ -14,3 +14,4 @@ class EmailState(TypedDict):
     urgency: int
     justification: str
     marked_as_read: bool
+    examples: list

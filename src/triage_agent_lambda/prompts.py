@@ -9,6 +9,7 @@ email_scoring_prompt = ChatPromptTemplate.from_messages([
      "User profile:\n{user_profile}\n\n"
      "Email date: {email_date}\n"
      "Current date: {current_date}\n\n"
+     "Example emails that have been manually graded by this user: {examples}\n\n"
      "Respond ONLY in valid JSON, in the format:\n"
      "{{\n"
      "  \"importance\": <int>,\n"

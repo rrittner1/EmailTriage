@@ -1,4 +1,7 @@
+from decimal import Decimal
 import json
+import math
+import os
 import boto3
 from botocore.exceptions import ClientError
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -9,6 +12,23 @@ from google.oauth2.credentials import Credentials
 # Function to determine ranking of emails based on importance and urgency
 def score_function(importance: int, urgency: int) -> int:
     return importance + urgency
+
+# embed text into vector
+def embed(text: str):
+    bedrock = boto3.client("bedrock-runtime", region_name=os.environ.get("AWS_REGION","us-east-1"))
+    payload = {"inputText": text}
+    resp = bedrock.invoke_model(
+        modelId="amazon.titan-embed-text-v2:0",
+        body=json.dumps(payload)
+    )
+    vec = json.loads(resp["body"].read())["embedding"]
+    return vec
+
+# Determine cosine similarity of 2 vectors
+def cosine(a, b):
+    dot = sum(x*y for x,y in zip(a,b))
+    na = math.sqrt(sum(x*x for x in a)); nb = math.sqrt(sum(y*y for y in b))
+    return 0.0 if na==0 or nb==0 else dot/(na*nb)
 
 # get secret from aws secrets manager
 def get_secret(secret_name): # Code from aws

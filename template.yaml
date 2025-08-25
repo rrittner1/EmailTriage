@@ -57,6 +57,12 @@ Resources:
             TableName: UserProfiles
         - DynamoDBCrudPolicy:
             TableName: UserInboxes
+        - DynamoDBCrudPolicy:
+            TableName: UserGradedEmails
+        - Statement:
+            Effect: Allow
+            Action: bedrock:InvokeModel
+            Resource: "*"
   EditUserProfile:
     Type: AWS::Serverless::Function
     Properties:
